@@ -3,9 +3,9 @@
 //
 #include "token.h"
 
-Token::Token(TokenType type, TokenDetails details) {
-    details = details;
-    type = type;
+Token::Token(const TokenType type, const TokenDetails details) {
+    this->details = details;
+    this->type = type;
 }
 
 Token::Token() {

@@ -31,7 +31,7 @@ ASTNode Parser::parse(const std::string &input) {
     _currentPos = 0;
     this->log("Parsing: " + input);
 
-    while (_currentPos < _currentInput.length() - 1) {
+    while (_currentPos < _currentInput.length()) {
         const auto &c = _currentInput[_currentPos];
         if (std::isdigit(c)) _tokenizeDigit(c);
         else if (std::isalpha(c)) _tokenizeAlpha(std::tolower(c));
@@ -48,9 +48,8 @@ ASTNode Parser::parse(const std::string &input) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 void Parser::_tokenizeParantheses(char c) {
-    TokenDetails det{.op = NOP};
-    if (c == '(') _tokens.emplace_back(PAR_L, det);
-    else if (c == ')') _tokens.emplace_back(PAR_R, det);
+    if (c == '(') _tokens.emplace_back(TokenType::PAR_L, TokenDetails{.op = NOP});
+    else if (c == ')') _tokens.emplace_back(TokenType::PAR_R, TokenDetails{.op = NOP});
     _currentPos++;
 }
 
@@ -67,19 +66,17 @@ void Parser::_tokenizeDigit(char c) {
     if (nextSpace != std::string::npos) {
         const std::string nextNumber = _currentInput.substr(_currentPos, nextSpace - _currentPos);
         number = std::stoi(nextNumber);
+        _tokens.emplace_back(CONSTANT, TokenDetails{.value = number});
         _currentPos = nextSpace;
-    }
-    else if (nextParR != std::string::npos) {
-        const std::string nextNumber = _currentInput.substr(_currentPos, nextParR - _currentPos);
-        number = std::stoi(nextNumber);
-        _currentPos = nextParR;
-    }
-    if (nextSpace != std::string::npos || nextParR != std::string::npos) {
-        TokenDetails det{.value = number};
-        _tokens.emplace_back(CONSTANT, det);
         return;
     }
-
+    if (nextParR != std::string::npos) {
+        const std::string nextNumber = _currentInput.substr(_currentPos, nextParR - _currentPos);
+        number = std::stoi(nextNumber);
+        _tokens.emplace_back(CONSTANT, TokenDetails{.value = number});
+        _currentPos = nextParR;
+        return;
+    }
     _handleInvalid();
 }
 
