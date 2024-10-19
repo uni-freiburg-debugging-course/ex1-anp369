@@ -2,7 +2,7 @@
 // Created by andi on 19.10.24.
 //
 
-#include <util/ASTNode.h>
+#include <common/astnode.h>
 
 // ---------------------------------------------------------------------------------------------------------------------
 ASTNode::ASTNode() = default;

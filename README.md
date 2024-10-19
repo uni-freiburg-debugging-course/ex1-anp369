@@ -10,7 +10,7 @@ Detailed instructions are in the exercise sheet. Following are your checkpoints:
 
 
 ## Build instructions
-1. Make sure you have the following tools installed: `cmake`, `make`, an cpp compiler supporting at least C++11 
+1. Make sure you have the following tools installed: `cmake`, `make`, an cpp compiler supporting at least C++14
 2. Install the following required libraries: `boost`
 3. create a build directory: `mkdir build && cd build`
 4. generate makefiles: `cmake ..`
