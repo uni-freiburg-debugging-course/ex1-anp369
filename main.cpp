@@ -1,11 +1,17 @@
 //
 // Created by andi on 18.10.24.
 //
+#include <fstream>
 #include <iostream>
+#include <memory>
+
 #include <boost/program_options.hpp>
-#include <boost/optional.hpp>
+
+#include <parser.h>
 
 namespace po = boost::program_options;
+
+constexpr const char *stdin_path = "/dev/stdin";
 
 void print_help() {
     std::cout << "lisp parser - Andreas Philipp\n";
@@ -19,13 +25,11 @@ void print_help() {
 }
 
 int main(int argc, char **argv) {
-
-
     po::options_description desc("Allowed options");
-    boost::optional<bool> loggingEnabled;
+    bool loggingEnabled;
     desc.add_options()
             ("help", "produce help message")
-            ("logging",po::value(&loggingEnabled), "define which parts should be logged")
+            ("logging", po::bool_switch(&loggingEnabled), "define which parts should be logged")
             ("file", po::value<std::string>(), "specify the file to read from, use stdint otherwise");
 
     po::variables_map vm;
@@ -39,9 +43,27 @@ int main(int argc, char **argv) {
 
     bool logging = vm.count("logging");
 
-    std::string file_name = "";
-    if (vm.count("file")) {
-        file_name = vm["file"].as<std::string>();
+    Parser p(logging);
+
+    std::string fileName = "";
+    if (vm.count("file")) fileName = vm["file"].as<std::string>();
+
+    std::ifstream file;
+    if (!fileName.empty()) {
+        file = std::ifstream(fileName);
+        if (!file.is_open()) {
+            std::cerr << "Could not open file " << fileName << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        file = std::ifstream(stdin_path);
     }
 
+    std::string line;
+    while (std::getline(file, line)) {
+        p.parse(line);
+    }
+    file.close();
+
+    return 0;
 }

@@ -1,0 +1,1 @@
+target_sources(lisp_parser PRIVATE ASTNode.cpp ASTNode.h)
