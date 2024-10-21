@@ -86,8 +86,8 @@ void Parser::_tokenizeAlpha(char c) {
     if (nextSpace != std::string::npos) {
         const std::string nextOp = _currentInput.substr(_currentPos, nextSpace - _currentPos);
         if (nextOp == "simplify") {
-            TokenDetails det{.op = SIMPLIFY};
-            _tokens.emplace_back(TokenType::OPERATION, det);
+            TokenDetails det{.kw = SIMPLIFY};
+            _tokens.emplace_back(TokenType::KEYWORD, det);
             _currentPos = nextSpace;
             return;
         }
@@ -116,6 +116,10 @@ void Parser::_tokenizeOperationChar(char c) {
 }
 
 //  ---------------------------------------------------------------------------------------------------------------------
+ASTNode Parser::_parseToken(const std::vector<Token> &tokens) {
+
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------

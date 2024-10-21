@@ -9,37 +9,37 @@ ASTNode::ASTNode() = default;
 
 // ---------------------------------------------------------------------------------------------------------------------
 ASTNode::ASTNode(ASTNode& parent) {
-        this->_parent = parent;
+        this->parent = parent;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 ASTNode::ASTNode(ASTNode& parent, ASTNode &left, ASTNode &right) {
-        this->_parent = parent;
-        this->_left = left;
-        this->_right = right;
+        this->parent = parent;
+        this->left = left;
+        this->right = right;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 bool ASTNode::isLeaf() const {
-        return !_left.has_value() && !_right.has_value();
+        return !left.has_value() && !right.has_value();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 bool ASTNode::isRoot() const {
-        return !_parent.has_value();
+        return !parent.has_value();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 boost::optional<ASTNode&> ASTNode::getLeft() const {
-        return _left;
+        return left;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 boost::optional<ASTNode&> ASTNode::getRight() const {
-        return _right;
+        return right;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 boost::optional<ASTNode&> ASTNode::getParent() const {
-        return _parent;
+        return parent;
 }

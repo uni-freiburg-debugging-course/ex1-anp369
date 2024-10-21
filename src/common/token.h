@@ -8,18 +8,22 @@
 
 enum Operation {
     NOP,
-    SIMPLIFY,
     ADD,
     SUBTRACT,
     MULTIPLY,
 };
 
+enum Keyword {
+    SIMPLIFY,
+};
+
 union TokenDetails {
+    Keyword kw;
     Operation op;
     int value;
 
     bool operator== (const TokenDetails& token) const {
-        return op == token.op && value == token.value;
+        return op == token.op && value == token.value && kw == token.kw;
     }
 };
 
@@ -27,6 +31,7 @@ enum TokenType {
     INVALID,
     PAR_L,
     PAR_R,
+    KEYWORD,
     OPERATION,
     CONSTANT,
 };

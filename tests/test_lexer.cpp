@@ -12,7 +12,7 @@ TEST(Lexer, CorrectOrderOfElements) {
     std::vector<Token> correctTokens;
 
     correctTokens.emplace_back(PAR_L, TokenDetails{.op = NOP});
-    correctTokens.emplace_back(OPERATION, TokenDetails{.op = SIMPLIFY});
+    correctTokens.emplace_back(KEYWORD, TokenDetails{.kw = SIMPLIFY});
     correctTokens.emplace_back(PAR_L, TokenDetails{.op = NOP});
     correctTokens.emplace_back(OPERATION, TokenDetails{.op = MULTIPLY});
     correctTokens.emplace_back(CONSTANT, TokenDetails{.value = 79});

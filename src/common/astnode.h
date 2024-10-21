@@ -5,6 +5,9 @@
 #ifndef ASTNODE_H
 #define ASTNODE_H
 #include <boost/optional/optional.hpp>
+
+#include "token.h"
+
 class ASTNode {
     public:
     ASTNode();
@@ -31,9 +34,9 @@ class ASTNode {
     /// @return returns the right child of this node if it exists
     boost::optional<ASTNode&> getRight() const;
 
-private:
-    boost::optional<ASTNode&> _parent;
-    boost::optional<ASTNode&> _left;
-    boost::optional<ASTNode&> _right;
+    Token action;
+    boost::optional<ASTNode&> parent;
+    boost::optional<ASTNode&> left;
+    boost::optional<ASTNode&> right;
 };
 #endif //ASTNODE_H

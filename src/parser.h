@@ -46,9 +46,6 @@ private:
     /// prints an error message to the user in case of invalid input
     void _handleInvalid() const;
 
-    /// @return tries to fetch the next Token in the current search string
-    Token fetchNextToken();
-
     // LEXING FUNCTIONS
 
     /// returns a token object for the given paranthesis
@@ -68,6 +65,10 @@ private:
 
     /// processes '+', '*', '-'
     void _tokenizeOperationChar(char c);
+
+    // PARSING FUNCTIONS
+    /// starts building the AST from the lexed tokens
+    ASTNode _parseToken(const std::vector<Token> &tokens);
 };
 
 #endif //PARSER_H
