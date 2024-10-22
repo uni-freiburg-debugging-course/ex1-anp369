@@ -4,16 +4,17 @@
 
 #ifndef TOKEN_H
 #define TOKEN_H
+#include <string>
 
 
-enum Operation {
+enum class Operation {
     NOP,
     ADD,
     SUBTRACT,
     MULTIPLY,
 };
 
-enum Keyword {
+enum class Keyword {
     SIMPLIFY,
 };
 
@@ -27,7 +28,7 @@ union TokenDetails {
     }
 };
 
-enum TokenType {
+enum class TokenType {
     INVALID,
     PAR_L,
     PAR_R,
@@ -38,20 +39,22 @@ enum TokenType {
 
 class Token {
 public:
-    Token(TokenType type, TokenDetails details);
+    Token(TokenType pType, TokenDetails pDetails);
 
     Token();
 
+    std::string toString() const;
+
     bool operator== (const Token& token) const {
-        if (type != token.type) {return false;}
-        if (type == CONSTANT) {
-            return details.value == token.details.value;
+        if (mType != token.mType) {return false;}
+        if (mType == TokenType::CONSTANT) {
+            return mDetails.value == token.mDetails.value;
         }
-        return details.op == token.details.op;
+        return mDetails.op == token.mDetails.op;
     };
 
-    TokenType type;
-    TokenDetails details{};
+    TokenType mType;
+    TokenDetails mDetails{};
 };
 
 #endif //TOKEN_H

@@ -5,6 +5,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <memory>
 #include <vector>
 #include <gtest/gtest_prod.h>
 
@@ -22,53 +23,54 @@ public:
     /// parses the given input and returns an AST if successful, fails with exit(EXIT_FAILURE) otherwise
     /// @param input string containing the lisp expression to parse
     /// @return root node of the constructed AST
-    ASTNode parse(const std::string &input);
+    std::unique_ptr<ASTNode>& parse(const std::string &input);
 
 private:
     FRIEND_TEST(Lexer, CorrectOrderOfElements);
-    bool _isLoggingEnabled;
-
-    /// buffer during tokenizing for memorizing the current expected token
-    TokenType _currentGuess = TokenType::INVALID;
+    bool mIsLoggingEnabled;
 
     /// the expression that currently gets parsed
-    std::string _currentInput;
+    std::string mCurrentInput;
 
     /// holds already discovered tokens in order they occured
-    std::vector<Token> _tokens;
+    std::vector<Token> mTokens;
+
+    std::unique_ptr<ASTNode> mAstRoot;
 
     /// holds the position the lexer is currently at in the search string
-    unsigned int _currentPos = 0;
+    unsigned int mCurrentPos = 0;
 
     /// @param message logs the given message to stdout if enabled
     void log(const std::string &message) const;
 
-    /// prints an error message to the user in case of invalid input
-    void _handleInvalid() const;
+    /// prints an error message to the user in case of invalid input encountered during lexing
+    void handleInvalidLexing() const;
 
+    /// prints an error message that occured during parsing
+    void handleInvalidParsing(const Token& pToken) const;
     // LEXING FUNCTIONS
 
     /// returns a token object for the given paranthesis
-    /// @param c
+    /// @param pChar
     /// @return
-    void _tokenizeParantheses(char c);
+    void tokenizeParantheses(char pChar);
 
     /// processes an encountered space in the string
-    void _tokenizeSpace();
+    void tokenizeSpace();
 
-    /// @param c
+    /// @param pChar
     /// @return
-    void _tokenizeDigit(char c);
+    void tokenizeDigit(char pChar);
 
     /// processes alphanumeric characters
-    void _tokenizeAlpha(char c);
+    void tokenizeAlpha(char pChar);
 
     /// processes '+', '*', '-'
-    void _tokenizeOperationChar(char c);
+    void tokenizeOperationChar(char pChar);
 
     // PARSING FUNCTIONS
     /// starts building the AST from the lexed tokens
-    ASTNode _parseToken(const std::vector<Token> &tokens);
+    std::unique_ptr<ASTNode>& parseTokens(const std::vector<Token>& pTokens);
 };
 
 #endif //PARSER_H

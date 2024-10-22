@@ -8,38 +8,19 @@
 ASTNode::ASTNode() = default;
 
 // ---------------------------------------------------------------------------------------------------------------------
-ASTNode::ASTNode(ASTNode& parent) {
-        this->parent = parent;
-}
+//ASTNode::ASTNode(std::shared_ptr<ASTNode> parent) {
+//    this->parent = std::move(parent);
+//}
 
 // ---------------------------------------------------------------------------------------------------------------------
-ASTNode::ASTNode(ASTNode& parent, ASTNode &left, ASTNode &right) {
-        this->parent = parent;
-        this->left = left;
-        this->right = right;
-}
+//ASTNode::ASTNode(std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+//    this->parent = std::move(parent);
+//    this->left = std::move(left);
+//    this->right = std::move(right);
+//}
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 bool ASTNode::isLeaf() const {
-        return !left.has_value() && !right.has_value();
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-bool ASTNode::isRoot() const {
-        return !parent.has_value();
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-boost::optional<ASTNode&> ASTNode::getLeft() const {
-        return left;
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-boost::optional<ASTNode&> ASTNode::getRight() const {
-        return right;
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-boost::optional<ASTNode&> ASTNode::getParent() const {
-        return parent;
+    return this->mLeft == nullptr && this->mRight == nullptr;
 }
