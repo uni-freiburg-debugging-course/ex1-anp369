@@ -70,7 +70,7 @@ private:
 
     // PARSING FUNCTIONS
     /// starts building the AST from the lexed tokens
-    std::unique_ptr<ASTNode>& parseTokens(const std::vector<Token>& pTokens);
+    std::unique_ptr<ASTNode> parseTokens(const std::vector<Token>& pTokens);
 };
 
 #endif //PARSER_H
