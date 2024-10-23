@@ -53,7 +53,15 @@ void Parser::lexString() {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-std::unique_ptr<ASTNode> &Parser::parse(const std::string &input) {
+void Parser::reset() {
+    mTokens.clear();
+    mCurrentInput.clear();
+    mCurrentPos = 0;
+    mAstRoot = std::make_unique<ASTNode>();
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+void Parser::parse(const std::string &input) {
     mCurrentInput = input;
     mCurrentPos = 0;
     this->log("Parsing: " + input);
@@ -62,7 +70,8 @@ std::unique_ptr<ASTNode> &Parser::parse(const std::string &input) {
 
     // Lexing done begin parsing
     mAstRoot = std::move(parseTokens());
-    return mAstRoot;
+
+    evaluate();
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -198,5 +207,40 @@ std::unique_ptr<ASTNode> Parser::parseTokens() {
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 void Parser::evaluate() {
+    // no expresions to parse, we're done here already
+    if (mAstRoot->mLeft == nullptr && mAstRoot->mRight == nullptr) {
+        return;
+    }
 
+    if (mAstRoot->mAction.mType == TokenType::KEYWORD &&
+        mAstRoot->mAction.mDetails.kw == Keyword::SIMPLIFY) {
+        // look in the left child for subtree, since simplify only has one operand
+        ASTNode &expRoot = *mAstRoot->mLeft;
+        Operation op = expRoot.mAction.mDetails.op;
+        int opLeft = expRoot.mLeft->mAction.mDetails.value;
+        int opRight = expRoot.mRight->mAction.mDetails.value;
+        int result = -1;
+        switch (op) {
+            case Operation::ADD:
+                result = opLeft + opRight;
+                break;
+            case Operation::SUBTRACT:
+                result = opLeft - opRight;
+                break;
+            case Operation::MULTIPLY:
+                result = opLeft * opRight;
+                break;
+            case Operation::NOP:
+                this->log("Invalid AST Node with OP NOP");
+                exit(1);
+        }
+        if (result < 0) {
+            printf("(- %d)\n", result * -1);
+        } else {
+            printf("%d\n", result);
+        }
+    } else {
+        this->log("Invalid AST to evaluate");
+        exit(1);
+    }
 }

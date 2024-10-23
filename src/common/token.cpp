@@ -9,7 +9,7 @@ Token::Token(const TokenType pType, const TokenDetails pDetails) {
 }
 
 Token::Token() {
-    mDetails = TokenDetails();
+    mDetails = TokenDetails{};
     mDetails.op = Operation::NOP;
     mDetails.value = 0;
     mType = TokenType::INVALID;
@@ -39,17 +39,24 @@ std::string Token::toString() const {
             switch (mDetails.op) {
                 case Operation::NOP:
                     value += "NOP";
+                    break;
                 case Operation::ADD:
                     value += "ADD";
+                    break;
+
                 case Operation::SUBTRACT:
                     value += "SUBTRACT";
+                    break;
+
                 case Operation::MULTIPLY:
                     value += "MULTIPLY";
+                    break;
             }
             break;
         case TokenType::CONSTANT:
             value += "CONSTANT: ";
             value += std::to_string(mDetails.value);
+            break;
         default: value += "UNKNOWN";
     }
 

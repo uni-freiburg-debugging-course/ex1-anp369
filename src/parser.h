@@ -23,7 +23,10 @@ public:
     /// parses the given input and returns an AST if successful, fails with exit(EXIT_FAILURE) otherwise
     /// @param input string containing the lisp expression to parse
     /// @return root node of the constructed AST
-    std::unique_ptr<ASTNode>& parse(const std::string &input);
+    void parse(const std::string &input);
+
+    // resets the parser to accept a new expression
+    void reset();
 
 private:
     FRIEND_TEST(Lexer, CorrectOrderOfElements);

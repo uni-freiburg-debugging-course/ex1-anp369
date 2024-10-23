@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     bool loggingEnabled;
     desc.add_options()
             ("help", "produce help message")
-            ("logging", po::bool_switch(&loggingEnabled), "define which parts should be logged")
+            ("logging", po::bool_switch(&loggingEnabled)->default_value(false), "define which parts should be logged")
             ("file", po::value<std::string>(), "specify the file to read from, use stdint otherwise");
 
     po::variables_map vm;
@@ -41,7 +41,8 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    bool logging = vm.count("logging");
+    //bool logging = vm.count("logging");
+    bool logging = vm["logging"].as<bool>();
 
     Parser p(logging);
 
@@ -61,8 +62,10 @@ int main(int argc, char **argv) {
 
     std::string line;
     while (std::getline(file, line)) {
-        if (line.empty()) { continue;}
-        p.parse(line);
+        if (!line.empty()) {
+            p.reset();
+            p.parse(line);
+        }
     }
     file.close();
 

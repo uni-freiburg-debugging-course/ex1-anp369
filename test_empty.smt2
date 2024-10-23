@@ -1,2 +1,2 @@
-(simplify (* 79 180))
-
+(simplify (+ 345 789))
+(simplify (- 1000 43))
