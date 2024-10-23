@@ -12,7 +12,7 @@ target_link_libraries(lisp_parser_test PRIVATE gtest)
 target_include_directories(lisp_parser_test PUBLIC src)
 
 add_executable(fuzzer src/fuzzer.cpp)
-
+target_include_directories(fuzzer PUBLIC src)
 
 add_subdirectory(src)
 add_subdirectory(tests)
