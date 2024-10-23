@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
 
     std::string line;
     while (std::getline(file, line)) {
+        if (line.empty()) { continue;}
         p.parse(line);
     }
     file.close();

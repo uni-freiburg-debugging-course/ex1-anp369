@@ -28,9 +28,28 @@ void Parser::handleInvalidLexing() const {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void Parser::handleInvalidParsing(const Token& pToken) const {
+void Parser::handleInvalidParsing(const Token &pToken) const {
     fprintf(stderr, "Error while parsing token %s", pToken.toString().c_str());
     exit(EXIT_FAILURE);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+void Parser::lexString() {
+    while (mCurrentPos < mCurrentInput.length()) {
+        const auto &c = mCurrentInput[mCurrentPos];
+        if (std::isdigit(c)) tokenizeDigit();
+        else if (std::isalpha(c)) tokenizeAlpha();
+        else if (c == '(' || c == ')') tokenizeParantheses(c);
+        else if (c == ' ') tokenizeSpace();
+        else if (c == '+' || c == '-' || c == '*') tokenizeOperationChar(c);
+        else handleInvalidLexing();
+    }
+
+    // post-processing, remove initial and ending parantheses
+    if (mTokens.front().mType == TokenType::PAR_L && mTokens.back().mType == TokenType::PAR_R) {
+        mTokens.erase(mTokens.begin());
+        mTokens.erase(mTokens.end());
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -39,18 +58,10 @@ std::unique_ptr<ASTNode> &Parser::parse(const std::string &input) {
     mCurrentPos = 0;
     this->log("Parsing: " + input);
 
-    while (mCurrentPos < mCurrentInput.length()) {
-        const auto &c = mCurrentInput[mCurrentPos];
-        if (std::isdigit(c)) tokenizeDigit(c);
-        else if (std::isalpha(c)) tokenizeAlpha(std::tolower(c));
-        else if (c == '(' || c == ')') tokenizeParantheses(c);
-        else if (c == ' ') tokenizeSpace();
-        else if (c == '+' || c == '-' || c == '*') tokenizeOperationChar(c);
-        else handleInvalidLexing();
-    }
+    lexString();
 
     // Lexing done begin parsing
-    mAstRoot = std::move(parseTokens(mTokens));
+    mAstRoot = std::move(parseTokens());
     return mAstRoot;
 }
 
@@ -67,7 +78,7 @@ void Parser::tokenizeSpace() {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void Parser::tokenizeDigit(char pChar) {
+void Parser::tokenizeDigit() {
     const size_t nextSpace = mCurrentInput.find(' ', mCurrentPos);
     const size_t nextParR = mCurrentInput.find(')', mCurrentPos);
     int number;
@@ -89,7 +100,7 @@ void Parser::tokenizeDigit(char pChar) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void Parser::tokenizeAlpha(char pChar) {
+void Parser::tokenizeAlpha() {
     const size_t nextSpace = mCurrentInput.find(' ', mCurrentPos);
     if (nextSpace != std::string::npos) {
         const std::string nextOp = mCurrentInput.substr(mCurrentPos, nextSpace - mCurrentPos);
@@ -106,7 +117,7 @@ void Parser::tokenizeAlpha(char pChar) {
 // ---------------------------------------------------------------------------------------------------------------------
 void Parser::tokenizeOperationChar(char pChar) {
     if (pChar == '-' && std::isdigit(mCurrentInput[mCurrentPos + 1])) {
-        tokenizeDigit(pChar);
+        tokenizeDigit();
     } else {
         TokenDetails det{};
         if (pChar == '-') {
@@ -124,52 +135,61 @@ void Parser::tokenizeOperationChar(char pChar) {
 }
 
 //  ---------------------------------------------------------------------------------------------------------------------
-std::unique_ptr<ASTNode> Parser::parseTokens(const std::vector<Token> &pTokens) {
+std::unique_ptr<ASTNode> Parser::parseTokens() {
     /* check first token
      * if it is an opening par '(' eat it (rm from vector) for now and search at i+1
      * if not, then assign the next token to the root node
-     * if it is an opening par '(' recursivly search slice [i+1:] of the tokens and assign result to left child
+     * if it is an opening par '(' recursively search slice [i+1:] of the tokens and assign result to left child
      * if not assign token to the left child
      * check next token
-     * if it is an opening par '(' recursivly search slice [i+1:] of the tokens and assign result to right child
+     * if it is an opening par '(' recursively search slice [i+1:] of the tokens and assign result to right child
      * if not assign it to the right child
      * make sure the next token is a closing par ')', otherwise abort parsing with an error message
      */
-    const unsigned int currentPos = 0;
     std::unique_ptr<ASTNode> root = std::make_unique<ASTNode>();
+    constexpr unsigned int first = 0;
 
     // parse expression root
-    if (pTokens[currentPos].mType == TokenType::PAR_L) {
-        root = std::move(parseTokens(
-            std::vector<Token>(pTokens.begin() + currentPos + 1, pTokens.end())));
+    if (mTokens.at(0).mType == TokenType::PAR_L) {
+        //auto cpVec = std::vector<Token>(mTokens.begin() + first + 1, mTokens.end());
+        this->mTokens.erase(mTokens.begin());
+        root = std::move(parseTokens());
     } else {
-        root->mAction = pTokens[currentPos];
+        root->mAction = mTokens[first];
+        mTokens.erase(mTokens.begin());
     }
 
+
     // parse left child
-    if (pTokens[currentPos + 1].mType == TokenType::PAR_L) {
-        root->mLeft = std::move(
-            parseTokens(std::vector<Token>(pTokens.begin() + (currentPos + 1) + 1, pTokens.end())));
+    if (mTokens[first].mType == TokenType::PAR_L) {
+        //auto cpVec = std::vector<Token>(mTokens.begin() + first + 1, mTokens.end());
+        this->mTokens.erase(mTokens.begin());
+        root->mLeft = std::move(parseTokens());
     } else {
         root->mLeft = std::make_unique<ASTNode>();
-        root->mLeft->mAction = pTokens[currentPos + 1];
+        root->mLeft->mAction = mTokens[first];
+        mTokens.erase(mTokens.begin());
     }
+
 
     // parse right child
     // skip in case of simplify keywords as they only have one child
     if (!(root->mAction.mType == TokenType::KEYWORD && mAstRoot->mAction.mDetails.kw == Keyword::SIMPLIFY)) {
-        if (pTokens[currentPos + 2].mType == TokenType::PAR_L) {
-            root->mRight = std::move(
-                parseTokens(std::vector<Token>(pTokens.begin() + (currentPos + 2) + 1, pTokens.end())));
+        if (mTokens[first].mType == TokenType::PAR_L) {
+            //auto cpVec = std::vector<Token>(mTokens.begin() + first + 1, mTokens.end());
+            mTokens.erase(mTokens.begin());
+            root->mRight = std::move(parseTokens());
         } else {
             root->mRight = std::make_unique<ASTNode>();
-            root->mRight->mAction = pTokens[currentPos + 2];
+            root->mRight->mAction = mTokens[first];
+            mTokens.erase(mTokens.begin());
         }
     }
-    if (pTokens[currentPos + 3].mType == TokenType::PAR_R) {
+    if (mTokens[first].mType == TokenType::PAR_R) {
+        mTokens.erase(mTokens.begin());
         return root;
     }
-    handleInvalidParsing(pTokens[currentPos + 3]);
+    handleInvalidParsing(mTokens[first]);
     exit(1);
 }
 
@@ -177,3 +197,6 @@ std::unique_ptr<ASTNode> Parser::parseTokens(const std::vector<Token> &pTokens) 
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
+void Parser::evaluate() {
+
+}

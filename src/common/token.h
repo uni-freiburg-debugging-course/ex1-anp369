@@ -50,6 +50,9 @@ public:
         if (mType == TokenType::CONSTANT) {
             return mDetails.value == token.mDetails.value;
         }
+        if (mType == TokenType::KEYWORD) {
+            return mDetails.kw == token.mDetails.kw;
+        }
         return mDetails.op == token.mDetails.op;
     };
 

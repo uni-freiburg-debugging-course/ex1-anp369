@@ -48,7 +48,10 @@ private:
 
     /// prints an error message that occured during parsing
     void handleInvalidParsing(const Token& pToken) const;
+
     // LEXING FUNCTIONS
+    // lexes the string stored in the mCurrentInput field
+    void lexString();
 
     /// returns a token object for the given paranthesis
     /// @param pChar
@@ -58,19 +61,23 @@ private:
     /// processes an encountered space in the string
     void tokenizeSpace();
 
-    /// @param pChar
     /// @return
-    void tokenizeDigit(char pChar);
+    void tokenizeDigit();
 
     /// processes alphanumeric characters
-    void tokenizeAlpha(char pChar);
+    void tokenizeAlpha();
 
     /// processes '+', '*', '-'
     void tokenizeOperationChar(char pChar);
 
     // PARSING FUNCTIONS
     /// starts building the AST from the lexed tokens
-    std::unique_ptr<ASTNode> parseTokens(const std::vector<Token>& pTokens);
+    std::unique_ptr<ASTNode> parseTokens();
+
+    // EVALUATOR FUNCTIONS
+
+    // starts evaluating the AST starting at mAstRoot
+    void evaluate();
 };
 
 #endif //PARSER_H
