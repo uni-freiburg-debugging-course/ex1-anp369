@@ -8,7 +8,7 @@
 
 
 TEST(Lexer, CorrectOrderOfElements) {
-    std::string statement = "(simplify (* 79 -180))";
+    const std::string statement = "(simplify (* 79 -180))";
     std::vector<Token> correctTokens;
 
     correctTokens.emplace_back(TokenType::PAR_L, TokenDetails{.op = Operation::NOP});

@@ -35,7 +35,7 @@ private:
     /// the expression that currently gets parsed
     std::string mCurrentInput;
 
-    /// holds already discovered tokens in order they occured
+    /// holds already discovered tokens in order they occurred
     std::vector<Token> mTokens;
 
     std::unique_ptr<ASTNode> mAstRoot;
@@ -49,14 +49,14 @@ private:
     /// prints an error message to the user in case of invalid input encountered during lexing
     void handleInvalidLexing() const;
 
-    /// prints an error message that occured during parsing
+    /// prints an error message that occurred during parsing
     void handleInvalidParsing(const Token& pToken) const;
 
     // LEXING FUNCTIONS
     // lexes the string stored in the mCurrentInput field
     void lexString();
 
-    /// returns a token object for the given paranthesis
+    /// returns a token object for the given parenthesis
     /// @param pChar
     /// @return
     void tokenizeParantheses(char pChar);

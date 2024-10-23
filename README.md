@@ -20,7 +20,7 @@ The used libraries have the following versions:
 * `boost 1.86.0-3`
 * `gtest 1.15.2-1`
 
-1. Make sure you have the following tools installed: `cmake`, `make`, an cpp compiler supporting at least C++14
+1. Make sure you have the following tools installed: `cmake`, `make`, a cpp compiler supporting at least C++14
 2. Install the following required libraries: `boost` and `gtest`
 3. create a build directory: `mkdir build && cd build`
 4. generate makefiles: `cmake ..`

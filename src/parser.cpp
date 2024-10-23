@@ -45,7 +45,7 @@ void Parser::lexString() {
         else handleInvalidLexing();
     }
 
-    // post-processing, remove initial and ending parantheses
+    // post-processing, remove initial and ending parentheses
     if (mTokens.front().mType == TokenType::PAR_L && mTokens.back().mType == TokenType::PAR_R) {
         mTokens.erase(mTokens.begin());
         mTokens.erase(mTokens.end());
@@ -75,7 +75,7 @@ void Parser::parse(const std::string &input) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void Parser::tokenizeParantheses(char pChar) {
+void Parser::tokenizeParantheses(const char pChar) {
     if (pChar == '(') mTokens.emplace_back(TokenType::PAR_L, TokenDetails{.op = Operation::NOP});
     else if (pChar == ')') mTokens.emplace_back(TokenType::PAR_R, TokenDetails{.op = Operation::NOP});
     mCurrentPos++;
@@ -124,7 +124,7 @@ void Parser::tokenizeAlpha() {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-void Parser::tokenizeOperationChar(char pChar) {
+void Parser::tokenizeOperationChar(const char pChar) {
     if (pChar == '-' && std::isdigit(mCurrentInput[mCurrentPos + 1])) {
         tokenizeDigit();
     } else {
@@ -155,7 +155,7 @@ std::unique_ptr<ASTNode> Parser::parseTokens() {
      * if not assign it to the right child
      * make sure the next token is a closing par ')', otherwise abort parsing with an error message
      */
-    std::unique_ptr<ASTNode> root = std::make_unique<ASTNode>();
+    auto root = std::make_unique<ASTNode>();
     constexpr unsigned int first = 0;
 
     // parse expression root
@@ -207,7 +207,7 @@ std::unique_ptr<ASTNode> Parser::parseTokens() {
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
 void Parser::evaluate() {
-    // no expresions to parse, we're done here already
+    // no expressions to parse, we're done here already
     if (mAstRoot->mLeft == nullptr && mAstRoot->mRight == nullptr) {
         return;
     }
@@ -215,10 +215,10 @@ void Parser::evaluate() {
     if (mAstRoot->mAction.mType == TokenType::KEYWORD &&
         mAstRoot->mAction.mDetails.kw == Keyword::SIMPLIFY) {
         // look in the left child for subtree, since simplify only has one operand
-        ASTNode &expRoot = *mAstRoot->mLeft;
-        Operation op = expRoot.mAction.mDetails.op;
-        int opLeft = expRoot.mLeft->mAction.mDetails.value;
-        int opRight = expRoot.mRight->mAction.mDetails.value;
+        const ASTNode &expRoot = *mAstRoot->mLeft;
+        const Operation op = expRoot.mAction.mDetails.op;
+        const int opLeft = expRoot.mLeft->mAction.mDetails.value;
+        const int opRight = expRoot.mRight->mAction.mDetails.value;
         int result = -1;
         switch (op) {
             case Operation::ADD:

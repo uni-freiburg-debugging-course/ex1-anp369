@@ -11,7 +11,7 @@
 
 namespace po = boost::program_options;
 
-constexpr const char *stdin_path = "/dev/stdin";
+constexpr const auto *stdin_path = "/dev/stdin";
 
 void print_help() {
     std::cout << "lisp parser - Andreas Philipp\n";
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 
     Parser p(logging);
 
-    std::string fileName = "";
+    std::string fileName;
     if (vm.count("file")) fileName = vm["file"].as<std::string>();
 
     std::ifstream file;

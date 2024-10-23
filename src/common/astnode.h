@@ -4,9 +4,8 @@
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
-#include <memory>
-#include <boost/optional/optional.hpp>
 
+#include <memory>
 #include "token.h"
 
 class ASTNode {
@@ -17,7 +16,7 @@ public:
 
     /// 
     /// @return returns whether the node is the root of a tree. True if parent is null
- //   bool isRoot() const;
+    //   bool isRoot() const;
 
     /// 
     /// @return returns whether this node is a leaf. True if both left and right are null
